@@ -8,6 +8,7 @@
 * Highlight ore veins when they shouldn't be mined.
 * Notify when you no longer need to mine to make sure sack doesn't become to full.
 * Highlight rockfalls.
+* Send ores and golden nuggets collected from the sack to the built-in Loot Tracker.
 * Upstairs is mapped to sections to only show the veins in your section.
 
 <br>
@@ -22,6 +23,18 @@
 ![](img/widget.png)
 
 <br>
+
+## Loot Tracker
+Enable **Loot Tracker** and **Motherlode Mine Improved**, then leave
+**General → Track ores found** enabled (on by default). Collecting from the sack
+records newly received coal, gold ore, mithril ore, adamantite ore, runite ore,
+and golden nuggets under **Motherlode Mine** in Loot Tracker. Mining pay-dirt,
+bank withdrawals, and gems are not recorded by this integration.
+
+The built-in **Motherlode Mine** plugin stays disabled because it conflicts with
+Improved. This integration does not require it and does not change that conflict.
+This fork must be built/run separately until it is distributed through the Plugin
+Hub; installing the existing Hub release will not include these changes.
 
 ## Config
 ![](img/config.png)

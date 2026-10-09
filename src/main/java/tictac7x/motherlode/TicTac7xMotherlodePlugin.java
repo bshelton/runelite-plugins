@@ -23,6 +23,7 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
@@ -73,6 +74,10 @@ public class TicTac7xMotherlodePlugin extends Plugin {
 	@Inject
 	private ChatMessageManager chatMessageManager;
 
+	@Inject
+	private EventBus eventBus;
+
+	private OreLootTracker oreLootTracker;
 	private Provider provider;
 	private Character character;
 	private Bank bank;
@@ -91,6 +96,8 @@ public class TicTac7xMotherlodePlugin extends Plugin {
 
 	@Override
 	protected void startUp() {
+		oreLootTracker = new OreLootTracker(client, config, eventBus, this);
+		clientThread.invokeLater(oreLootTracker::initialize);
 		provider = new Provider(client);
 		character = new Character(client);
 		bank = new Bank(configManager, config, itemManager);
@@ -109,6 +116,7 @@ public class TicTac7xMotherlodePlugin extends Plugin {
 
 	@Override
 	protected void shutDown() {
+		oreLootTracker.reset();
 		widget.shutDown();
 		overlayManager.remove(oreVeins);
 		overlayManager.remove(rockfalls);
@@ -117,6 +125,11 @@ public class TicTac7xMotherlodePlugin extends Plugin {
 
 	@Subscribe
 	public void onGameStateChanged(final GameStateChanged event) {
+		if (event.getGameState() == GameState.LOGGED_IN) {
+			oreLootTracker.initialize();
+		} else {
+			oreLootTracker.reset();
+		}
 		oreVeins.onGameStateChanged(event);
 		rockfalls.onGameStateChanged(event);
 		sendMessageAboutPluginVersion(event);
@@ -124,6 +137,7 @@ public class TicTac7xMotherlodePlugin extends Plugin {
 
 	@Subscribe
 	public void onItemContainerChanged(final ItemContainerChanged event) {
+		oreLootTracker.onItemContainerChanged(event);
 		inventory.onItemContainerChanged(event);
 		bank.onItemContainerChanged(event);
 		motherlode.onItemContainerChanged(event);
@@ -161,6 +175,7 @@ public class TicTac7xMotherlodePlugin extends Plugin {
 
 	@Subscribe
 	public void onGameTick(final GameTick event) {
+		oreLootTracker.onGameTick();
 		character.checkIsInMotherlode();
 		if (!character.isInMotherlode()) return;
 
@@ -182,6 +197,7 @@ public class TicTac7xMotherlodePlugin extends Plugin {
 
 	@Subscribe
 	public void onVarbitChanged(final VarbitChanged event) {
+		oreLootTracker.onVarbitChanged(event);
 		hopper.onVarbitChanged(event);
 		motherlode.onVarbitChanged(event);
 	}

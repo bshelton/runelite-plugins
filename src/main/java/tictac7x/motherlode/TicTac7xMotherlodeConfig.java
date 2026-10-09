@@ -32,6 +32,14 @@ public interface TicTac7xMotherlodeConfig extends Config {
 			section = general
 		) default boolean notifyToStopMining() { return true; }
 
+		@ConfigItem(
+			keyName = "track_ores_found",
+			name = "Track ores found",
+			description = "Record ores and golden nuggets collected from the sack in Loot Tracker. Requires Loot Tracker to be enabled.",
+			position = 3,
+			section = general
+		) default boolean trackOresFound() { return true; }
+
 	@ConfigSection(
 		name = "Ore veins and rockfalls",
 		description = "Highlight ore veins and rockfalls based on their states.",
